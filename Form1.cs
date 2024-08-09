@@ -1,28 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Media;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-using Rug.Osc;
-using System.Runtime.InteropServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Drawing.Text;
+using MetroFramework.Forms;
+using MetroFramework.Controls;
 
 namespace TeriziaMultitoolS
 {
-    public partial class Form1 : Form
+    public partial class Form1 : MetroForm
     {
-
         public Form1()
         {
             InitializeComponent();
@@ -30,25 +15,21 @@ namespace TeriziaMultitoolS
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            // Any initialization code can go here
         }
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
             {
-                // Checkbox is checked
                 checkBox1.Text = "checkBox1Checked";
-
                 OSCV.floatingP = true;
                 trackBar1.Minimum = -100;
                 trackBar1.Maximum = 100;
             }
             else
             {
-                // Checkbox is unchecked
-                // Change the text of checkBox1
                 checkBox1.Text = "checkBox1Unchecked";
-
                 OSCV.floatingP = false;
                 trackBar1.Minimum = 0;
                 trackBar1.Maximum = 100;
@@ -59,43 +40,40 @@ namespace TeriziaMultitoolS
         {
             OSCV.OSC_Bool_1 = true;
             MCItem.GiveItem();
-            //MessageHandler.VRCOSCMesage();
+            // Uncomment the next line if you implement the VRCOSCMesage method
+            // MessageHandler.VRCOSCMesage();
         }
 
-
-        private void trackBar1_Scroll(object sender, EventArgs e)
+        private void trackBar1_Scroll(object sender, ScrollEventArgs e)
         {
-
             if (OSCV.floatingP)
             {
-
                 int ininini = trackBar1.Value;
                 OSCV.TestFloat = Program.ConvertIntToFloat(ininini);
                 label1.Text = $"Scroll1: {OSCV.TestFloat}";
             }
-
-            else if (!OSCV.floatingP)
+            else
             {
-
                 OSCV.TestInt = trackBar1.Value;
                 label1.Text = $"Scroll1: {OSCV.TestInt}";
             }
-            //MessageHandler.VRCOSCMesage();
-
         }
+
 
 
         private void button4_Click(object sender, EventArgs e)
         {
+            KillProcess(OSCV.programmKillstring);
+        }
 
-            Process[] processes = Process.GetProcessesByName(OSCV.programmKillstring);
+        private void KillProcess(string processName)
+        {
+            Process[] processes = Process.GetProcessesByName(processName);
             foreach (Process process in processes)
             {
                 try
                 {
-                    // Kill the process
                     process.Kill();
-                    // Wait for the process to exit to ensure it is terminated
                     process.WaitForExit();
                     Console.WriteLine($"Successfully killed process {process.ProcessName} with ID {process.Id}");
                 }
@@ -105,96 +83,59 @@ namespace TeriziaMultitoolS
                 }
             }
         }
+
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            // Change the string based on TextBox input
             OSCV.TestString = textBox1.Text;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            // Change the string based on TextBox input
             OSCV.programmKillstring = textBox2.Text;
         }
+
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            // Change the string based on TextBox input
             OSCV.CloudVarAddres = textBox3.Text;
         }
+
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
-            // Change the string based on TextBox input
-            OSCV.CloudVarVariable = textBox3.Text;
+            OSCV.CloudVarVariable = textBox4.Text;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             OSCV._soundPlayer.Play();
-
-            if (OSCV.TestBool == false)
-            {
-                label2.Text = "false";
-                Console.WriteLine("OSCV.TestBool == false");
-            }
-            if (OSCV.TestBool == true)
-            {
-                label2.Text = "true";
-                Console.WriteLine("OSCV.TestBool == true");
-            }
-            
+            label2.Text = OSCV.TestBool ? "true" : "false";
+            Console.WriteLine($"OSCV.TestBool == {OSCV.TestBool}");
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-
-            OSCV.PlaceHolderInt += 1;
-
-            if (OSCV.PlaceHolderInt > 10)
-            {
-                OSCV.PlaceHolderInt = 0;
-            }
-
+            OSCV.PlaceHolderInt = (OSCV.PlaceHolderInt + 1) % 11;
             label3.Text = $"{OSCV.PlaceHolderInt}";
+
+            // Send the OSC message
             MessageHandler.VRCOSCMesageXimput();
-            //MessageHandler.VRCOSCMesageString();
+            // Uncomment the next line if you want to send string messages as well
+            // MessageHandler.VRCOSCMesageString();
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox2.Checked)
-            {
-                // Checkbox is checked
-                timer1.Enabled = true;
-
-            }
-            else
-            {
-                // Checkbox is unchecked
-                timer1.Enabled = false;
-
-            }
+            timer1.Enabled = checkBox2.Checked;
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-
+            // Handle the numeric up/down value change if needed
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox3.Checked)
-            {
-                // Checkbox is checked
-                
-
-            }
-            else
-            {
-                // Checkbox is unchecked
-                
-
-            }
+            // Placeholder for OSCReceiver toggle functionality
+            // Implement the receiver logic here if needed
         }
     }
-
 }
